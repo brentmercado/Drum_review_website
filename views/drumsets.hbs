@@ -1,5 +1,32 @@
 {{> header}}
 
-<h1>Drumsets Page!</h1>
+<div class="container">
+    <header class="jumbotron">
+        <div class="container">
+            <h1>Welcome to Drum Reviews!</h1>
+            <p>View some of our favorite drums</p>
+            <p>
+                <a class="btn btn-primary btn-lg" href="/drumsets/new">Add a drumset</a>
+            </p>
+        </div>
+    </header>
+
+    <div class="row text-center" style="display: flex, flex-wrap: wrap;">
+        <div class="col-lg-12">
+            <h3>Our Most Popular Drumsets!</h3>
+        </div>
+
+        {{#each drumsets}}
+            <div class="col-md-3 col-sm-6">
+                <div class="card bg-light border-dark mb-3">
+                    <img class="card-img-top" src="{{image}}">
+                    <div class="card-body">
+                        <h4 class="card-title">{{name}}</h4>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>
 
 {{> footer}}
