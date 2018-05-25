@@ -21,6 +21,20 @@ app.get('/drumsets', function(req, res) {
     res.render("drumsets", {drumsets: drumsets});
 });
 
+app.post('/drumsets', function(req, res) {
+    var name = req.body.name;
+    var image = req.body.image;
+    var newDrumset = {name: name, image: image};
+
+    drumsets.push(newDrumset);
+
+    res.redirect("/drumsets");
+});
+
+app.get("/drumsets/new", function(req, res) {
+    res.render("new");
+});
+
 app.listen(3000, function() {
     console.log("Server started...");
 });
