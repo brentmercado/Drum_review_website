@@ -2,33 +2,54 @@ var express     = require("express");
 var app         = express();
 var bodyParser  = require("body-parser");
 var hbs         = require("hbs");
+var mongoose    = require("mongoose");
+
+mongoose.connect("mongodb://localhost/drum_review");
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "hbs");
 hbs.registerPartials(__dirname + '/views/partials');
 
-var drumsets = [
-    {name: "Pearl Export EXL 7-piece", image: "https://media.sweetwater.com/images/items/750/EXL727S-C255-large.jpg?v=beb9513f42a2f518"},
-    {name: "Ludwig Accent Combo 5-piece", image: "https://media.guitarcenter.com/is/image/MMGS7/Accent-Combo-5-piece-Drum-Set-Wine/666618000025000-00-500x500.jpg"},
-    {name: "Tama Imperialstar 5-piece", image: "https://media.sweetwater.com/api/i/q-82__ha-d5a5bbdea9e687b0__hmac-10ef2f9adbc72a6e32c14c4ba8df575d1e82d8b2/images/items/750/IP52NBCBOB-large.jpg"}
-];
+// SCHEMA SETUP
+var drumsetSchema = new mongoose.Schema({
+    name: String,
+    image: String,
+    description: String
+});
+var Drumset = mongoose.model("Drumset", drumsetSchema);
 
 app.get('/', function(req, res) {
     res.render("landing");
 });
 
+// INDEX - show all drumsets
 app.get('/drumsets', function(req, res) {
-    res.render("drumsets", {drumsets: drumsets});
+    // Get all drumsets from DB
+    Drumset.find({}, function(err, allDrumsets) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("drumsets", {drumsets: allDrumsets})
+        }
+    });
 });
 
+// CREATE - add new drumset to DB
 app.post('/drumsets', function(req, res) {
     var name = req.body.name;
     var image = req.body.image;
-    var newDrumset = {name: name, image: image};
+    var description = req.body.description;
+    var newDrumset = {name: name, image: image, description: description};
 
-    drumsets.push(newDrumset);
-
-    res.redirect("/drumsets");
+    // Create a new drumset and save to DB
+    Drumset.create(newDrumset, function(err, newDrumset) {
+        if (err) {
+            console.log(err);
+            
+        } else {
+            res.redirect("/drumsets");
+        }
+    });
 });
 
 app.get("/drumsets/new", function(req, res) {
